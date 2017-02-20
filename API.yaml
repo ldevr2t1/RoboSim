@@ -1,0 +1,542 @@
+swagger: '2.0'
+info:
+  title: Team 1 Robot Simulation API
+  description: Stores and Retrieves information needed for the robot simulation
+  version: "1.0.0"
+# the domain of the service
+host: port:8000
+# array of all schemes that your API supports
+schemes:
+  - https
+basePath: /v1
+paths:
+  /:
+    get:
+      summary: Problems
+      tags:
+        - Problems
+      description: |
+        Returns a list of all of the Problems generated. This can be an empty list.
+      operationId: getProblems
+      produces:
+        - application/json
+        - application/xml
+      responses:
+        '200':
+          description: An array of Problems
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Problem'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      tags:
+        - Problems
+      summary: Creates a new problem and returns a problemID
+      description: ""
+      operationId: addProblem
+      produces:
+        - application/json
+        - application/xml
+      responses:
+        '200':
+          description: The id of the new problem generated
+          schema:
+            type: integer
+            format: int32
+        '405':
+          description: Invalid input  
+  /id={problem_id}/:
+    get:
+      summary: Problems
+      tags:
+        - Problems
+      description: |
+        Returns a specific problem
+      operationId: getProblem
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true  
+      responses:
+        '200':
+          description: A Problem type, containing all values
+          schema:
+            $ref: '#/definitions/Problem'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - Problems
+      summary: Delete Problem
+      description: This removes the problem by the given ID
+      operationId: deleteProblem
+      produces:
+        - application/json
+        - application/xml    
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true          
+      responses:
+        '404':
+          description: Problem not found
+        '400':
+          description: Invalid ID supplied   
+  /id={problem_id}/Obstacles:
+    get:
+      summary: Obstacles
+      tags:
+        - Obstacles
+      description: |
+        Returns a list of all of the obstacles in the problem. This can be an empty list.
+      operationId: getObstacles
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true            
+      responses:
+        '200':
+          description: An array of obstacles
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Obstacle'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'    
+    post:
+      tags:
+        - Obstacles
+      summary: Add a new obstacle to the list
+      description: ""
+      operationId: addObstacle
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true          
+        - name: obstacle
+          in: body
+          required: true
+          description: Obstacle object that needs to be added to the list.
+          schema:
+            $ref: '#/definitions/Obstacle'
+      responses:
+        '200':
+          description: The id of the new obstacle generated
+          schema:
+            type: integer
+            format: int32      
+        '405':
+          description: Invalid input    
+  /id={problem_id}/Obstacles/obstacle_id={obstacle_id}:
+    get:
+      summary: Obstacles
+      tags:
+        - Obstacles
+      description: |
+        Returns an obstacle
+      operationId: getObstacle
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true 
+        - name: obstacle_id
+          in: path
+          description: The id of the obstacle to be updated.
+          type: integer
+          format: int32
+          required: true           
+      responses:
+        '200':
+          description: An obstacle
+          schema:
+            $ref: '#/definitions/Obstacle'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error' 
+    put:
+      tags:
+        - Obstacles
+      summary: Update an existing obstacle
+      description: ""
+      operationId: updateObstacle
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml        
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true          
+        - name: obstacle_id
+          in: path
+          description: The id of the obstacle to be updated.
+          type: integer
+          format: int32
+          required: true
+        - name: updated_obstacle
+          in: body
+          description: Obstacle object that needs to be added to the list.
+          schema:
+            $ref: '#/definitions/Obstacle'
+          required: false
+      responses:
+        '405':
+          description: Validation exception
+        '404':
+          description: Obstacle not found
+        '400':
+          description: Invalid ID supplied     
+    delete:
+      tags:
+        - Obstacles
+      summary: Delete Obstacle
+      description: This removes the obstacle by the given ID
+      operationId: deleteObstacle
+      produces:
+        - application/json
+        - application/xml    
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true          
+        - name: obstacle_id
+          in: path
+          description: The ID of the Obstacle that needs to be deleted.
+          required: true
+          type: integer
+          format: int32
+      responses:
+        '404':
+          description: Obstacle not found
+        '400':
+          description: Invalid ID supplied      
+  /id={problem_id}/Robot:
+    get:
+      summary: Robot
+      description: |
+        Returns a description of the robot, including the current location
+      tags:
+        - Robot
+      operationId: getRobot
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true            
+      responses:
+        '200':
+          description: A robot object, including current location.
+          schema:
+            $ref: '#/definitions/Robot'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      tags:
+        - Robot
+      summary: Update the existing robot value
+      description: ""
+      operationId: updateRobot
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml        
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true          
+        - name: robot
+          in: body
+          description: Robot object that needs to be updated.
+          required: true
+          schema:
+            $ref: '#/definitions/Robot'
+      responses:
+        '405':
+          description: Validation exception
+        '404':
+          description: Robot not found   
+  /id={problem_id}/Goal:
+    get:
+      summary: Goal Location
+      description: |
+        Returns a description of the goal location.
+      tags:
+        - Goal
+      operationId: getGoal
+      produces:
+        - application/json
+        - application/xml  
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true                  
+      responses:
+        '200':
+          description: The goal location information
+          schema:
+            $ref: '#/definitions/Goal'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      tags:
+        - Goal
+      summary: Update the existing goal value
+      description: ""
+      operationId: updateGoal
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml        
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true          
+        - name: goal
+          in: body
+          description: Goal object that needs to be updated.
+          required: true
+          schema:
+            $ref: '#/definitions/Goal'
+      responses:
+        '405':
+          description: Validation exception
+        '404':
+          description: Goal not found   
+  /id={problem_id}/Boundary:
+    get:
+      summary: Boundary
+      description: Returns a description of the boundary
+      tags:
+        - Boundary
+      operationId: getBoundary
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true                    
+      responses:
+        '200':
+          description: Boundary information, including starting coordinates, width and height
+          schema:
+            $ref: '#/definitions/Boundary'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      tags:
+        - Boundary
+      summary: Update the existing boundary value
+      description: ""
+      operationId: updateBoundary
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml        
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true          
+        - name: boundary
+          in: body
+          description: Boundary object that needs to be updated.
+          required: true
+          schema:
+            $ref: '#/definitions/Boundary'
+      responses:
+        '405':
+          description: Validation exception
+        '404':
+          description: Boundary not found
+  /id={problem_id}/Path:
+    get:
+      summary: Path
+      description: Returns a description of the path from the robot's current location to the goal.
+      tags:
+        - Path
+      operationId: getPath
+      produces:
+        - application/json
+        - application/xml   
+      parameters:
+        - name: problem_id
+          in: path
+          description: The id of the problem being manipulated
+          type: integer
+          format: int32
+          required: true                 
+      responses:
+        '200':
+          description: Array of Coordinates from start to finish.
+          schema:
+            $ref: '#/definitions/Path'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Coordinate:
+    type: object
+    properties:
+      x_coordinate:
+        type: number
+        format: double
+        description: the x-coordinate of the object, measured in cm on a 2d plane.
+      y_coordinate:
+        type: number
+        format: double
+        description: the y-coordinate of the object, measured in cm on a 2d plane.
+  Rectangle:
+    type: object
+    properties:
+      coordinates:
+        $ref: '#/definitions/Coordinate'
+      width:
+        type: number
+        format: double
+        description: The width of the rectangle, measured in cm.
+      height:
+        type: number
+        format: double
+        description: The height of the rectangle, measured in cm.
+  Obstacle:
+    type: object
+    properties:
+      obstacle_id:
+        type: integer
+        format: int32
+        description: Unique identifier representing a specific obstacle in the list.
+      obstacle_info:
+        $ref: '#/definitions/Rectangle'
+  Robot:
+    type: object
+    properties:
+      coordinates:
+        $ref: '#/definitions/Coordinate'
+  Goal:
+    type: object
+    properties:
+      coordinates:
+        $ref: '#/definitions/Coordinate'
+  Boundary:
+    type: object
+    properties:
+      boundary_info:
+        $ref: '#/definitions/Rectangle'
+  Path:
+    type: object
+    properties:
+      path_cost:
+        type: number
+        format: double
+        description: The total cost to travel the path
+      coordinates:
+        type: array
+        items:
+          $ref: '#/definitions/Coordinate'
+        description: The path travelled
+  Problem:
+    type: object
+    properties:
+      problem_id:
+        type: integer
+        format: int32
+      robot:
+        $ref: '#/definitions/Robot'
+      goal:
+        $ref: '#/definitions/Goal'
+      boundary:
+        $ref: '#/definitions/Boundary'
+      obstacles:
+        type: array
+        items:
+          $ref: '#/definitions/Obstacle'
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
