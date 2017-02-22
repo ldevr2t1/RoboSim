@@ -4,7 +4,7 @@ info:
   description: "Stores and Retrieves information needed for the robot simulation"
   version: "1.0.0"
   title: "Team 1 Robot Simulation API"
-host: ec2-54-202-25-115.us-west-2.compute.amazonaws.com
+host: "ec2-54-202-25-115.us-west-2.compute.amazonaws.com"
 basePath: "/v1"
 schemes:
 - "http"
@@ -144,8 +144,6 @@ paths:
 definitions:
   Problem:
     type: "object"
-    properties:
-      data: {}
   Error:
     type: "object"
     properties:
