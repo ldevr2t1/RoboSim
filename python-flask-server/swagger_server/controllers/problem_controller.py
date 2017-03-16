@@ -26,7 +26,7 @@ def delete_problem(problem_id):
       return jsonify(Error(404, "Problem not found")), status.HTTP_404_NOT_FOUND
     else:
       Firebase.delete('/problems', 'id_' + str(problem_id))
-      return jsonify({"success":"Obstacle has been deleted"})
+      return jsonify({"success":"Problem has been deleted"})
 
 
 def get_problem(problem_id):
