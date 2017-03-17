@@ -5,7 +5,8 @@ from .encoder import JSONEncoder
 
 
 if __name__ == '__main__':
+    print("HELLO WORLD")
     app = connexion.App(__name__, specification_dir='./swagger/')
     app.app.json_encoder = JSONEncoder
     app.add_api('swagger.yaml', arguments={'title': 'Stores and Retrieves information needed for the robot simulation'})
-    app.run(port=5050)
+    app.run(host="192.168.99.100", port=5050)
