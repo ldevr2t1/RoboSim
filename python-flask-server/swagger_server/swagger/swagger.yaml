@@ -4,7 +4,7 @@ info:
   description: "Stores and Retrieves information needed for the robot simulation"
   version: "1.0.0"
   title: "Team 1 Robot Simulation API"
-host: "localhost:8080"
+host: "0.0.0.0:5050"
 basePath: "/v2"
 schemes:
 - "http"
